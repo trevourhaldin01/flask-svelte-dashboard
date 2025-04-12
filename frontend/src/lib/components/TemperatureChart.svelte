@@ -4,11 +4,12 @@
     import type {SensorReading} from '$lib/types';
 
     const {data} = $props<{data: SensorReading[]}>();
+    console.log('data',data)
     let canvas: HTMLCanvasElement;
-    let chart: Chart | undefined;
+    let chart = $state<Chart | undefined>(undefined);
 
-    // Assign the canvas element to the variable
-    canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+    // // Assign the canvas element to the variable
+    // canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
 
     $effect(()=>{
         if(chart && data){
@@ -63,4 +64,4 @@
 
 </script>
 
-<canvas bind:this={canvas} id="myCanvas">{canvas}</canvas>
+<canvas bind:this={canvas} id="myCanvas"></canvas>

@@ -4,9 +4,11 @@
     import TemperatureChart from '$lib/components/TemperatureChart.svelte';
     import HumidityGauge from '$lib/components/HumidityGauge.svelte';
   
-    let currentReading: SensorReading | null = null;
-    let historicalData: SensorReading[] = [];
+    let currentReading= $state<SensorReading | null>(null);
+    let historicalData = $state<SensorReading[]>([]);
     let eventSource: EventSource | undefined;
+
+    console.log('historicalData', historicalData)
 
     const url = import.meta.env.VITE_API_URL;
   
@@ -15,10 +17,16 @@
         try {
           const response = await fetch(`${url}/current`);
           currentReading = await response.json();
+          if (currentReading !== null) { // Add null check here
+            historicalData = [currentReading];
+          }
   
           eventSource = new EventSource(`${url}/stream`);
           eventSource.addEventListener('sensor_update', (event) => {
             currentReading = JSON.parse(event.data);
+            if(currentReading !== null) { // Add null check here
+              historicalData = [...historicalData, currentReading].slice(-30); // Keep last 30 readings
+            }
           });
         } catch (error) {
           console.error('Error fetching sensor data:', error);
